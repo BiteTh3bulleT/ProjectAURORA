@@ -17,3 +17,7 @@ futures = "0.3"
 libc = "0.2"
 libloading = "0.8"
 uuid = { version = "1.0", features = ["v4"] }
+
+[features]
+default = []
+tch = ["burn/tch"]
