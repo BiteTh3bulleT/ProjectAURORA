@@ -32,7 +32,8 @@ fi
 echo "Setting up Python environment..."
 python3 -m venv venv
 source venv/bin/activate
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+# Install compatible PyTorch version for tch 0.15.0
+pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 
 # Set environment variables for PyTorch
 export LIBTORCH_USE_PYTORCH=1
