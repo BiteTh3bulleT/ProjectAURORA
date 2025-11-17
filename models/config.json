@@ -1,0 +1,17 @@
+{
+  "models": {
+    "sd15": {
+      "path": "models/sd15.onnx",
+      "type": "stable_diffusion_1_5"
+    },
+    "sdxl": {
+      "path": "models/sdxl.onnx",
+      "type": "stable_diffusion_xl"
+    }
+  },
+  "default_model": "sd15",
+  "gpu_settings": {
+    "memory_limit": "8GB",
+    "precision": "fp16"
+  }
+}
