@@ -10,7 +10,9 @@ if command -v apt-get &> /dev/null; then
     sudo apt-get install -y build-essential cmake libgl1-mesa-dev libglfw3-dev libglew-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev python3 python3-pip python3-venv
 elif command -v zypper &> /dev/null; then
     # OpenSUSE
-    sudo zypper install -y cmake glfw-devel glew-devel python3 python3-pip
+    sudo zypper install -y cmake libGL-devel libGLEW-devel libX11-devel libXrandr-devel libXinerama-devel libXcursor-devel libXi-devel python3 python3-pip
+    # Try to install GLFW from different sources
+    sudo zypper install -y glfw-devel || sudo zypper install -y libglfw3-devel || echo "GLFW not found in zypper, trying alternative..."
 elif command -v dnf &> /dev/null; then
     # Fedora/RHEL
     sudo dnf install -y cmake glfw-devel glew-devel python3 python3-pip
@@ -32,8 +34,8 @@ fi
 echo "Setting up Python environment..."
 python3 -m venv venv
 source venv/bin/activate
-# Install compatible PyTorch version for tch 0.15.0
-pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu
+# Install PyTorch from conda-forge or pip with compatible version
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu || pip install torch torchvision torchaudio
 
 # Set environment variables for PyTorch
 export LIBTORCH_USE_PYTORCH=1
