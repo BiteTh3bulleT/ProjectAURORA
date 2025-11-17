@@ -1,69 +1,110 @@
-# Build Instructions
+# AURORA Build Instructions
 
 ## Prerequisites
 
-- Rust (latest stable)
-- C++17/20 compiler (GCC/Clang/MSVC)
-- CMake 3.16+
-- Node.js 16+
-- OpenGL development libraries
-- GLFW, GLEW (for C++ rendering)
+AURORA requires the following system dependencies:
 
-## Linux Dependencies
-
+### Linux (Ubuntu/Debian)
 ```bash
-sudo apt-get install build-essential cmake libgl1-mesa-dev libglfw3-dev libglew-dev
+sudo apt-get update
+sudo apt-get install -y build-essential cmake libgl1-mesa-dev libglfw3-dev libglew-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev python3 python3-pip python3-venv
 ```
 
-## macOS Dependencies
-
+### Linux (OpenSUSE)
 ```bash
-brew install cmake glfw glew
+sudo zypper install -y cmake glfw-devel glew-devel python3 python3-pip
 ```
 
-## Windows Dependencies
+### Linux (Fedora/RHEL)
+```bash
+sudo dnf install -y cmake glfw-devel glew-devel python3 python3-pip
+```
 
-Install Visual Studio with C++ build tools, CMake, and vcpkg for dependencies.
+### Linux (Arch)
+```bash
+sudo pacman -S --noconfirm cmake glfw glew python python-pip
+```
+
+### macOS
+```bash
+brew install cmake glfw glew python3
+```
 
 ## Building
 
-1. Clone the repository:
+### Automatic Build (Recommended)
+Run the automated build script which will install all dependencies and build all components:
+
+```bash
+./scripts/build.sh
+```
+
+### Manual Build
+
+1. **Setup Python Environment**
    ```bash
-   git clone https://github.com/BiteTh3bulleT/ProjectAURORA.git
-   cd ProjectAURORA
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+   export LIBTORCH_USE_PYTORCH=1
    ```
 
-2. Run the build script:
+2. **Build AURORA Kernel**
    ```bash
-   chmod +x scripts/build.sh
-   ./scripts/build.sh
+   cd aurora_kernel
+   cargo build --release --features tch
+   cd ..
    ```
 
-   This will:
-   - Build the Rust kernel with Cargo
-   - Build the C++ renderer with CMake
-   - Build the Tauri UI application
+3. **Build Avatar Renderer**
+   ```bash
+   cd avatar_renderer
+   mkdir -p build
+   cd build
+   cmake ..
+   make -j$(nproc)
+   cd ../..
+   ```
+
+4. **Build Tauri UI**
+   ```bash
+   cd aurora_ui
+   npm install
+   npm run tauri build
+   cd ..
+   ```
 
 ## Running
 
-After building, run:
+After successful build:
+
 ```bash
 ./scripts/run.sh
 ```
 
-This starts the kernel and UI simultaneously.
-
-## Development
-
-For development with hot reloading:
-```bash
-cd aurora_ui
-npm run tauri dev
-```
+This will start the AURORA application with all components running.
 
 ## Troubleshooting
 
-- Ensure all dependencies are installed
-- Check that Rust and Cargo are in PATH
-- Verify CMake can find OpenGL/GLFW/GLEW
-- For GPU acceleration, ensure CUDA/Vulkan SDKs are installed
+### PyTorch Issues
+- Ensure Python virtual environment is activated
+- Check that `LIBTORCH_USE_PYTORCH=1` is set
+- Verify PyTorch installation: `python -c "import torch; print(torch.__version__)"`
+
+### OpenGL/GLFW Issues
+- Ensure graphics drivers are installed
+- Check OpenGL version: `glxinfo | grep "OpenGL version"`
+
+### Build Failures
+- Clean build: `rm -rf target/ aurora_renderer/build/ aurora_ui/src-tauri/target/`
+- Re-run build script
+
+## Architecture
+
+AURORA consists of three main components:
+
+1. **AURORA Kernel (Rust)**: Core AI engine with image generation
+2. **Avatar Renderer (C++)**: Real-time 3D avatar rendering
+3. **Tauri UI (Rust + TypeScript)**: Desktop application interface
+
+All components communicate via shared memory and FFI bridges.
