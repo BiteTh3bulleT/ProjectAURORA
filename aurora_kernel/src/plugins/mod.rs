@@ -1,4 +1,3 @@
-pub mod plugins;
 
 use libloading::{Library, Symbol};
 use std::collections::HashMap;

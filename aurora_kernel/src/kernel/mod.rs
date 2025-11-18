@@ -1,4 +1,3 @@
-pub mod kernel;
 
 use std::sync::Arc;
 use tokio::sync::RwLock;

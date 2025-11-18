@@ -1,4 +1,3 @@
-pub mod safety;
 
 use std::process::Command;
 

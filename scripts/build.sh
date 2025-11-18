@@ -30,19 +30,13 @@ else
     exit 1
 fi
 
-# Setup Python virtual environment and install PyTorch
-echo "Setting up Python environment..."
-python3 -m venv venv
-source venv/bin/activate
-# Install PyTorch from conda-forge or pip with compatible version
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu || pip install torch torchvision torchaudio
-
-# Set environment variables for PyTorch
-export LIBTORCH_USE_PYTORCH=1
+# Note: PyTorch installation removed - project uses Burn with WGPU backend
+# The tch feature is optional and not needed for core functionality
 
 echo "Building AURORA Kernel..."
 cd aurora_kernel
-cargo build --release --features tch
+# Build without tch feature - project uses WGPU backend for ML operations
+cargo build --release
 if [ $? -ne 0 ]; then
     echo "Failed to build AURORA Kernel"
     exit 1

@@ -1,4 +1,3 @@
-pub mod command_bus;
 
 use std::sync::Arc;
 use tokio::sync::{mpsc, RwLock};

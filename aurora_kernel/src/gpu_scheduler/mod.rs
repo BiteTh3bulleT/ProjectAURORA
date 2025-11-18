@@ -1,4 +1,3 @@
-pub mod gpu_scheduler;
 
 use std::sync::Arc;
 use tokio::sync::RwLock;

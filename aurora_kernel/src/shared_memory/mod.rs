@@ -1,4 +1,3 @@
-pub mod shared_memory;
 
 use std::ffi::c_void;
 use libc::{shm_open, ftruncate, mmap, PROT_READ, PROT_WRITE, MAP_SHARED};

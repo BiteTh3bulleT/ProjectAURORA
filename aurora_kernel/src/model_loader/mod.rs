@@ -1,16 +1,21 @@
-pub mod model_loader;
-
 use std::path::Path;
-use tch::{CModule, Device};
+use std::collections::HashMap;
+
+// Placeholder for loaded models - can be replaced with ONNX runtime or safetensors in the future
+pub struct LoadedModel {
+    pub name: String,
+    pub path: String,
+    // Add actual model data structure here when implementing
+}
 
 pub struct ModelLoader {
-    models: std::collections::HashMap<String, CModule>,
+    models: HashMap<String, LoadedModel>,
 }
 
 impl ModelLoader {
     pub async fn new() -> Self {
         Self {
-            models: std::collections::HashMap::new(),
+            models: HashMap::new(),
         }
     }
 
@@ -26,16 +31,16 @@ impl ModelLoader {
     }
 
     pub async fn load_onnx_models(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        // Implement ONNX model loading
+        // TODO: Implement ONNX model loading using onnxruntime or tract
         Ok(())
     }
 
     pub async fn load_aurora_weights(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        // Implement custom Aurora weights loading
+        // TODO: Implement custom Aurora weights loading using safetensors
         Ok(())
     }
 
-    pub fn get_model(&self, name: &str) -> Option<&CModule> {
+    pub fn get_model(&self, name: &str) -> Option<&LoadedModel> {
         self.models.get(name)
     }
 }
