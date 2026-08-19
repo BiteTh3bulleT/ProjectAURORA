@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public final class CassetteWalkmanClient implements ClientModInitializer {
@@ -49,16 +48,7 @@ public final class CassetteWalkmanClient implements ClientModInitializer {
     }
 
     private boolean readyToPlay(Minecraft client) {
-        if (client.player == null) return false;
-        if (!hasWalkmanInOffHand(client)) {
-            client.player.displayClientMessage(Component.literal("Equip the Cassette Walkman in your off-hand."), true);
-            return false;
-        }
-        if (!hasCassette(client)) {
-            client.player.displayClientMessage(Component.literal("You need a Cave Violence Vol. 1 cassette."), true);
-            return false;
-        }
-        return true;
+        return client.player != null && hasWalkmanInOffHand(client) && hasCassette(client);
     }
 
     private boolean hasWalkmanInOffHand(Minecraft client) {
