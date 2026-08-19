@@ -1,0 +1,3 @@
+Cassette Walkman prototype.
+
+The MIDI test files in the bundled Cave Violence Vol. 1 cassette were supplied by the user for local development/testing. This project does not grant redistribution rights to the underlying musical compositions or third-party MIDI arrangements.
