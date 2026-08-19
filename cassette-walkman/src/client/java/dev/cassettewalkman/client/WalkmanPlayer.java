@@ -2,7 +2,6 @@ package dev.cassettewalkman.client;
 
 import dev.cassettewalkman.CassetteWalkman;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 
 import java.util.List;
 import java.util.Random;
@@ -23,14 +22,14 @@ public final class WalkmanPlayer {
     }
 
     public void togglePlayPause() {
-        if (midiEngine.isPlaying()) { midiEngine.pause(); actionBar("Cassette paused"); return; }
-        if (midiEngine.isPaused()) { midiEngine.resume(); actionBar("Cassette resumed"); return; }
+        if (midiEngine.isPlaying()) { midiEngine.pause(); status("Cassette paused"); return; }
+        if (midiEngine.isPaused()) { midiEngine.resume(); status("Cassette resumed"); return; }
         startTrack(pickFirstTrack());
     }
 
     public void nextTrack() {
         List<PackManager.CassetteTrack> tracks = currentTracks();
-        if (tracks.isEmpty()) { actionBar("No MIDI tracks found"); return; }
+        if (tracks.isEmpty()) { status("No MIDI tracks found"); return; }
         int next;
         if (config.shuffle || currentPack().shuffle()) {
             if (tracks.size() == 1) next = 0;
@@ -40,26 +39,26 @@ public final class WalkmanPlayer {
     }
 
     public void stop() {
-        if (midiEngine.isPlaying() || midiEngine.isPaused()) { midiEngine.stop(); actionBar("Cassette stopped"); }
+        if (midiEngine.isPlaying() || midiEngine.isPaused()) { midiEngine.stop(); status("Cassette stopped"); }
     }
 
     public void cyclePack() {
         List<PackManager.CassettePack> packs = packManager.packs();
-        if (packs.isEmpty()) { actionBar("No cassette packs found"); return; }
+        if (packs.isEmpty()) { status("No cassette packs found"); return; }
         midiEngine.stop();
         packIndex = (packIndex + 1) % packs.size();
         trackIndex = -1;
-        actionBar("Cassette: " + currentPack().name());
+        status("Cassette: " + currentPack().name());
     }
 
     public void reload() {
         midiEngine.stop();
         config = WalkmanConfig.load();
         packManager.reload();
-        if (packManager.packs().isEmpty()) { packIndex = 0; trackIndex = -1; actionBar("No cassette packs found"); return; }
+        if (packManager.packs().isEmpty()) { packIndex = 0; trackIndex = -1; status("No cassette packs found"); return; }
         packIndex = Math.floorMod(packIndex, packManager.packs().size());
         trackIndex = -1;
-        actionBar("Reloaded " + packManager.packs().size() + " cassette pack(s)");
+        status("Reloaded " + packManager.packs().size() + " cassette pack(s)");
     }
 
     public boolean isAudiblyPlaying() { return midiEngine.isPlaying(); }
@@ -73,15 +72,15 @@ public final class WalkmanPlayer {
 
     private void startTrack(int index) {
         List<PackManager.CassetteTrack> tracks = currentTracks();
-        if (index < 0 || index >= tracks.size()) { actionBar("No playable MIDI tracks found"); return; }
+        if (index < 0 || index >= tracks.size()) { status("No playable MIDI tracks found"); return; }
         PackManager.CassetteTrack track = tracks.get(index);
         trackIndex = index;
         try {
             midiEngine.play(track.file(), config.midiVolume, () -> minecraft.execute(this::nextTrack));
-            actionBar("♪ " + track.artist() + " — " + track.title());
+            status("Playing " + track.artist() + " — " + track.title());
         } catch (Exception e) {
             CassetteWalkman.LOGGER.error("Could not play MIDI {}", track.file(), e);
-            actionBar("MIDI playback failed — check latest.log");
+            status("MIDI playback failed");
             midiEngine.stop();
         }
     }
@@ -94,5 +93,5 @@ public final class WalkmanPlayer {
     }
 
     private List<PackManager.CassetteTrack> currentTracks() { return currentPack().tracks(); }
-    private void actionBar(String message) { if (minecraft.player != null) minecraft.player.displayClientMessage(Component.literal(message), true); }
+    private void status(String message) { CassetteWalkman.LOGGER.info("[Walkman] {}", message); }
 }
