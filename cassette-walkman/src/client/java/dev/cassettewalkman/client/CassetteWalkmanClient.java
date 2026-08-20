@@ -14,7 +14,7 @@ public final class CassetteWalkmanClient implements ClientModInitializer {
     private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
             Identifier.fromNamespaceAndPath(CassetteWalkman.MOD_ID, "controls")
     );
-    private static final KeyMapping PLAY_PAUSE = key("play_pause", InputConstants.KEY_P);
+    private static final KeyMapping PLAY_PAUSE = key("play_pause", InputConstants.KEY_J);
     private static final KeyMapping NEXT_TRACK = key("next_track", InputConstants.KEY_N);
     private static final KeyMapping STOP = key("stop", InputConstants.KEY_O);
     private static final KeyMapping NEXT_PACK = key("next_pack", InputConstants.KEY_M);
@@ -36,13 +36,24 @@ public final class CassetteWalkmanClient implements ClientModInitializer {
     public void onInitializeClient() {
         Minecraft minecraft = Minecraft.getInstance();
         walkmanPlayer = new WalkmanPlayer(minecraft);
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (PLAY_PAUSE.consumeClick()) if (readyToPlay(client)) walkmanPlayer.togglePlayPause();
             while (NEXT_TRACK.consumeClick()) if (readyToPlay(client)) walkmanPlayer.nextTrack();
             while (STOP.consumeClick()) walkmanPlayer.stop();
             while (NEXT_PACK.consumeClick()) walkmanPlayer.cyclePack();
             while (RELOAD.consumeClick()) walkmanPlayer.reload();
-            if (walkmanPlayer.isAudiblyPlaying() && (!hasWalkmanInOffHand(client) || !hasCassette(client))) walkmanPlayer.stop();
+
+            if (walkmanPlayer.isAudiblyPlaying()) {
+                // The Walkman owns the soundtrack while a cassette is actively playing.
+                // Keep vanilla background music stopped so the two sources never overlap.
+                client.getMusicManager().stopPlaying();
+
+                if (!hasWalkmanInOffHand(client) || !hasCassette(client)) {
+                    walkmanPlayer.stop();
+                }
+            }
+
             musicAura.tick(client, walkmanPlayer);
         });
     }
