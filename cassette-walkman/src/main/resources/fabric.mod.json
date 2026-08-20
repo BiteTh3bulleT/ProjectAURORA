@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "cassettewalkman",
+  "version": "${version}",
+  "name": "Cassette Walkman",
+  "description": "A portable Minecraft MIDI cassette deck with an orbiting music-note aura.",
+  "authors": ["Cassette Walkman Project"],
+  "license": "ARR",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.cassettewalkman.CassetteWalkman"],
+    "client": ["dev.cassettewalkman.client.CassetteWalkmanClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
